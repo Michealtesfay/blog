@@ -1,11 +1,18 @@
 class PostsController < ApplicationController
+	before_action :authenticate_user!, except: [:index, :show]
 
-	def index	
+	def index
 		@posts = Post.all.order('created_at DESC')
 	end
+
 	def new
 		@post = Post.new
 	end
+
+	def show
+		@post = Post.find(params[:id])
+	end
+
 	def create
 		@post = Post.new(post_params)
 
@@ -33,17 +40,13 @@ class PostsController < ApplicationController
 	def destroy
 		@post = Post.find(params[:id])
 		@post.destroy
-		
-		redirect_to root_path
+
+		redirect_to posts_path
 	end
 
-	def show
-		@post = Post.find(params[:id])
-	end
 	private
-		def post_params
-			params.require(:post).permit(:title, :body)
-		end
 
+	def post_params
+		params.require(:post).permit(:title, :body)
+	end
 end
-
